@@ -4,10 +4,10 @@ $(function(){
 			
 			var settings = $.extend({
 					'background' : 'black',
-					'radius' : '5px',
+					'border-radius' : '5px',
 					'holderBackground' : '#c3c3c3',
-					'holderRadius' : '5px',
-					'scrollWidth' : '10px',
+					'holderborder-Radius' : '5px',
+					'Width' : '10px',
 					'holderWidth' : '10px'
 				},obj),
 				domCache = {
@@ -19,23 +19,31 @@ $(function(){
 					calculateScrollbarHeight.call(this);
 					calculateDrag();
 				},
+				getStyleObjectArray = function(){
+					var holderStyle='{',
+					scrollbarStyle = '{';
+					$.each(settings,function(index,value){
+						if(index.match(/holder/) != null){
+							holderStyle += '"'+index.replace(/holder/,'').toLowerCase()+'"' + ':"' + value+'",';
+						}else{
+							scrollbarStyle += '"'+index.toLowerCase()+'"' + ':"' + value+'",';
+						}
+					});
+					holderStyle = holderStyle.substr(0,holderStyle.length-1) + '}';
+					scrollbarStyle = scrollbarStyle.substr(0,scrollbarStyle.length-1) + '}';
+					return [JSON.parse(holderStyle),JSON.parse(scrollbarStyle)];
+				},
 				calculateScrollbarHeight = function(){
 					var customScrollabeContainerHeight = $(this).height(),
-					holderStyle='{',
 					contentHeight = parseInt($('.content').height());
 					scrollbarHeight = (customScrollabeContainerHeight / contentHeight) * customScrollabeContainerHeight;
 					domCache.scrollHolder
 					.css('height',customScrollabeContainerHeight)
 					.append(domCache.scrollBar.css('height',scrollbarHeight))
 					.prependTo(this);
-					
-					$.each(settings,function(index,value){
-						if(index.match(/holder/) != null){
-							holderStyle += '"'+index.replace(/holder/,'').toLowerCase()+'"' + ':"' + value+'",';
-						}
-					});
-					holderStyle = holderStyle.substr(0,holderStyle.length-1) + '}';
-					domCache.scrollHolder.css(JSON.parse(holderStyle));
+					styleArray = getStyleObjectArray();
+					domCache.scrollHolder.css(styleArray[0]);
+					domCache.scrollBar.css(styleArray[1]);
 					if(contentHeight < customScrollabeContainerHeight){
 						domCache.scrollHolder.css('display','none');
 					}
