@@ -1,6 +1,24 @@
-$(function(){
-	(function($){
-		$.fn.applyCustomScrollbar = function(obj){
+(function($){
+	
+		/*
+			local default settings variable which will hold default values for all the options exposed by the plugin.
+		*/	
+		var defalutSettings = {
+			'background' : 'black',
+			'border-radius' : '5px',
+			'holderBackground' : '#c3c3c3',
+			'holderborder-Radius' : '5px',
+			'Width' : '10px',
+			'holderWidth' : '10px'
+		};
+		
+		var customScrollBar = {
+			testingFunction : function(){
+				console.log(self);
+			}
+		};
+		
+		$.fn.applyCustomScrollbar = function( options ){
 			
 			var settings = $.extend({
 					'background' : 'black',
@@ -9,16 +27,18 @@ $(function(){
 					'holderborder-Radius' : '5px',
 					'Width' : '10px',
 					'holderWidth' : '10px'
-				},obj),
+				}, options ),
+				
 				domCache = {
-					scrollHolder : $('<div class="scroll-holder"></div>'),
-					scrollBar : $('<div class="scrollbar"></div>'),
-					content : this.find('.content')
+					scrollHolder : $('<div class="customscrollbar-scrollbar-holder"></div>'),
+					scrollBar : $('<div class="customscrollbar-scrollbar"></div>'),
+					content : this.find('.customscrollbar-scrollable-content')
 				},
 				init = function(){
 					calculateScrollbarHeight.call(this);
 					calculateDrag();
 				},
+				
 				getStyleObjectArray = function(){
 					var holderStyle='{',
 					scrollbarStyle = '{';
@@ -29,13 +49,15 @@ $(function(){
 							scrollbarStyle += '"'+index.toLowerCase()+'"' + ':"' + value+'",';
 						}
 					});
-					holderStyle = holderStyle.substr(0,holderStyle.length-1) + '}';
+					debugger;
+					holderStyle = holderStyle.substr(0,holderStyle.length-1) + ',"z-index":"5","min-width":"10px"}';
 					scrollbarStyle = scrollbarStyle.substr(0,scrollbarStyle.length-1) + '}';
 					return [JSON.parse(holderStyle),JSON.parse(scrollbarStyle)];
 				},
 				calculateScrollbarHeight = function(){
+					debugger;
 					var customScrollabeContainerHeight = $(this).height(),
-					contentHeight = parseInt($('.content').height());
+					contentHeight = parseInt($(this).find(domCache.content).find('tree-children').height()) + 19;
 					scrollbarHeight = (customScrollabeContainerHeight / contentHeight) * customScrollabeContainerHeight;
 					domCache.scrollHolder
 					.css('height',customScrollabeContainerHeight)
@@ -58,33 +80,14 @@ $(function(){
 						}
 					});
 				};
-			
+			console.log(this);
 			this.each(function(){
+				customScrollBar.self = this;
+				customScrollBar.testingFunction();
 				init.call(this);
 			});
 			return this;
 		};
 		
-		$('.custom-scrollable-container').applyCustomScrollbar();
+		//$('.custom-scrollable-container').applyCustomScrollbar();
 	})(jQuery);
-	
-	// var customScrollabeContainerHeight = $('.custom-scrollable-container').height(),
-		// scrollHolderHeight = parseInt($('.scroll-holder').css('height',customScrollabeContainerHeight).height()),
-		// contentHeight = parseInt($('.content').height()),
-		// scrollbarHeight = (scrollHolderHeight / contentHeight) * scrollHolderHeight,newTop=0;
-		
-		// $('.scrollbar')
-		// .css('height',scrollbarHeight)
-		// .draggable({
-			// containment : 'parent',
-			// axis : 'y',
-			// drag : function(event , ui){
-				// newTop = (parseInt($(this).css('top')) / scrollHolderHeight) * contentHeight;
-				// $('.content').css('top','-'+newTop+'px');
-			// }
-		// });
-		
-		
-		
-	
-});
