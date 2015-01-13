@@ -10,7 +10,7 @@ $(function(){
 			'holderBackground' : '#c3c3c3',
 			'holderborder-Radius' : '5px',
 			'Width' : '10px',
-			'holderWidth' : '10px'
+			'holderWidth' : '10px',
 		};
 		
 		var CustomScrollBar = {
@@ -18,6 +18,9 @@ $(function(){
 			init : function( options , element ){
 				var self = this;
 				self.elem = element;
+				if( !( options.contentContainer ) ){
+					return;
+				}
 				self.options = $.extend({},defalutSettings,options);
 				self.calculateScrollbarHeight();
 				self.calculateDrag();
@@ -48,11 +51,13 @@ $(function(){
 				var self = this,
 				scrollHolder = self.scrollHolder =  $('<div class="customscrollbar-scrollbar-holder"></div>'),
 				scrollBar = self.scrollBar = $('<div class="customscrollbar-scrollbar"></div>'),
-				content = self.content = self.elem.find('.customscrollbar-scrollable-content'),
+				content = self.content = self.options.contentContainer,
 				customScrollabeContainerHeight = self.elem.height(),
 				contentHeight = parseInt(content.height()) ,
 				scrollbarHeight = (customScrollabeContainerHeight / contentHeight) * customScrollabeContainerHeight;
 				
+				self.elem.css({'overflow':'hidden','position':'relative'});
+				content.css({'width':'90%','position':'relative'});
 				scrollHolder
 				.css('height',customScrollabeContainerHeight)
 				.append(scrollBar.css('height',scrollbarHeight))
@@ -180,7 +185,14 @@ $(function(){
 	$('.custom-scrollable-container').applyCustomScrollbar({
 		'background' : 'rgba(32,80,129,.5)',
 		'border-radius' : '0',
-		'holderborder-Radius' : '0'
+		'holderborder-Radius' : '0',
+		'contentContainer' : $('.custom-scrollable-container').find('.customscrollbar-scrollable-content')
+	});
+	$('#loremipsum').applyCustomScrollbar({
+		'background' : 'rgba(32,80,129,.5)',
+		'border-radius' : '0',
+		'holderborder-Radius' : '0',
+		'contentContainer' : $('#loremipsum').find('.content')
 	});
 });
 
