@@ -10,7 +10,16 @@ $(function(){
 			'holderBackground' : '#c3c3c3',
 			'holderborder-Radius' : '5px',
 			'Width' : '10px',
-			'holderWidth' : '10px',
+			'holderWidth' : '10px'
+		};
+		
+		var map = {
+			'background' : 'background',
+			'border-radius' : 'border-radius',
+			'holderBackground' : 'background',
+			'holderborder-Radius' : 'border-radius',
+			'Width' : 'width',
+			'holderWidth' : 'width'
 		};
 		
 		var CustomScrollBar = {
@@ -25,26 +34,27 @@ $(function(){
 				self.calculateScrollbarHeight();
 				self.calculateDrag();
 				self.handleMouseWheel();
-				// var styleArray = self.getStyleObjectArray();
-				// console.log(styleArray);
 			},
 			
 			getStyleObjectArray : function(){                      
 				var self = this,
-				holderStyle='{',
-				scrollbarStyle = '{';
+				holderStyle={},
+				scrollbarStyle = {};
 				
 				$.each(self.options,function( index , value ){
+					
 					if(index.match(/holder/) != null){
-						holderStyle += '"'+index.replace(/holder/,'').toLowerCase()+'"' + ':"' + value+'",';
+						holderStyle[map[index]] = value;
+					}else if(index.match(/contentContainer/)){
+						
 					}else{
-						scrollbarStyle += '"'+index.toLowerCase()+'"' + ':"' + value+'",';
+						scrollbarStyle[map[index]] = value;
 					}
 				});
-				
-				holderStyle = holderStyle.substr( 0 , holderStyle.length-1 ) + ',"z-index":"5","min-width":"10px"}';
-				scrollbarStyle = scrollbarStyle.substr( 0 , scrollbarStyle.length-1 ) + ',"top":"0"}';
-				return [JSON.parse( holderStyle ),JSON.parse( scrollbarStyle )];
+				self['styleObjects'] = {
+					'holderStyleObject' : holderStyle,
+					'scrollBarStyleObject' : scrollbarStyle
+				};
 			},
 			
 			calculateScrollbarHeight : function(){
@@ -63,9 +73,9 @@ $(function(){
 				.append(scrollBar.css('height',scrollbarHeight))
 				.prependTo(self.elem);
 				
-				var styleArray = self.getStyleObjectArray();
-				scrollHolder.css(styleArray[0]);
-				scrollBar.css(styleArray[1]);
+				self.getStyleObjectArray();
+				scrollHolder.css(self['styleObjects']['holderStyleObject']);
+				scrollBar.css(self['styleObjects']['scrollBarStyleObject']);
 				if(contentHeight < customScrollabeContainerHeight){
 					domCache.scrollHolder.css('display','none');
 				}
